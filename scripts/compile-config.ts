@@ -25,11 +25,7 @@ function inferType(value: string): string {
 	// Check for number - must not be empty after trim and must parse as valid number
 	// Also exclude strings that start with 0 (like zip codes) unless it's just "0" or a decimal
 	const num = Number(trimmedValue);
-	if (
-		!Number.isNaN(num) &&
-		Number.isFinite(num) &&
-		!/^0\d/.test(trimmedValue)
-	) {
+	if (!Number.isNaN(num) && Number.isFinite(num) && !/^0\d/.test(trimmedValue)) {
 		return "number";
 	}
 
@@ -69,9 +65,7 @@ async function compileConfiguration() {
 
 	// Read all CSV files
 	const files = await fs.readdir(csvDir);
-	const csvFiles = files.filter(
-		(f) => f.endsWith(".csv") && !f.startsWith("example-"),
-	);
+	const csvFiles = files.filter((f) => f.endsWith(".csv") && !f.startsWith("example-"));
 
 	// If no CSV files (only examples), use example files
 	const filesToProcess =
@@ -108,9 +102,7 @@ async function compileConfiguration() {
 			}
 
 			// Extract config name from filename
-			const configName = file
-				.replace(/^example-/, "")
-				.replace(/\.csv$/, "");
+			const configName = file.replace(/^example-/, "").replace(/\.csv$/, "");
 			const typeName = toPascalCase(configName);
 			const variableName = toCamelCase(configName);
 
@@ -168,9 +160,8 @@ async function compileConfiguration() {
 				const configFile = path.join(outputDir, `${configName}.ts`);
 				await fs.writeFile(configFile, configContent);
 
-				allImports.push(
-					`export { ${typeName}Config, ${variableName}Config } from "./generated/${configName}";`,
-				);
+				allImports.push(`export type { ${typeName}Config } from "./generated/${configName}";`);
+				allImports.push(`export { ${variableName}Config } from "./generated/${configName}";`);
 			} else {
 				// Generate TypeScript interface
 				const interfaceContent = `export interface ${typeName} {\n${Object.entries(typeMap)
@@ -205,8 +196,9 @@ async function compileConfiguration() {
 				const outputFile = path.join(outputDir, `${configName}.ts`);
 				await fs.writeFile(outputFile, fullContent);
 
+				allImports.push(`export type { ${typeName} } from "./generated/${configName}";`);
 				allImports.push(
-					`export { ${typeName}, ${variableName}${Object.keys(firstRecord).includes("id") ? `, get${typeName}ById` : ""} } from "./generated/${configName}";`,
+					`export { ${variableName}${Object.keys(firstRecord).includes("id") ? `, get${typeName}ById` : ""} } from "./generated/${configName}";`,
 				);
 			}
 

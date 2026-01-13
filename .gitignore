@@ -47,3 +47,4 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 src/generated/
 config/csv/*.csv
 !config/csv/example-*.csv
+service-account-key.json

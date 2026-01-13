@@ -1,0 +1,68 @@
+# ls-lint configuration for STRICT snake_case enforcement
+# See: https://ls-lint.org/2.x/configuration/the-basics.html
+# RULE: Everything is snake_case except a few conventional config files
+
+ls:
+  # Source code - STRICT snake_case for TypeScript/Luau files
+  src/**/*.ts: snake_case | regex:^index\.(client|server)\.ts$
+  src/**/*.tsx: snake_case | regex:^index\.tsx$
+  src/**/*.luau: snake_case
+  src/**/*.lua: snake_case
+  
+  # Scripts - STRICT snake_case for TypeScript
+  scripts/ts/src/**/*.ts: snake_case
+  scripts/lune/**/*.luau: snake_case
+  scripts/roblox/**/*.luau: snake_case
+  
+  # Scripts - STRICT snake_case for shell scripts
+  scripts/shell/**/*.sh: snake_case
+  
+  # Config files at root - snake_case OR conventional names only
+  ./*.config.{js,mjs,ts,json}: snake_case | regex:^(commitlint|lint-staged|jest)\.config\.(js|mjs|ts)$
+  ./*.{json,yml,yaml,toml,lock}: snake_case | regex:^(package|tsconfig|biome|turbo|asphalt|rokit|selene|bunfig|bun\.lockb)\.
+  
+  # Test files - STRICT snake_case (allow .spec.ts, .test.ts patterns)
+  src/**/__tests__/**/*.{js,ts,tsx}: snake_case | regex:^.*\.(spec|test)\.(ts|tsx|js)$
+  tools/**/__tests__/**/*.{js,ts,tsx}: snake_case | regex:^.*\.(spec|test)\.(ts|tsx|js)$
+  
+  # Directories - STRICT snake_case
+  src/**/: snake_case
+  scripts/**/: snake_case
+  tools/**/: snake_case
+  .config/**/: snake_case
+  .github/**/: snake_case | regex:^\.github$
+  
+  # Stories - STRICT snake_case (allow .story.tsx and .storybook.ts patterns)
+  src/stories/**/*.{ts,tsx}: snake_case | regex:^.*\.(story|storybook)\.(ts|tsx)$
+  
+  # Assets - STRICT snake_case or lowercase
+  assets/**/*: snake_case | lowercase
+  
+  # Shared configurations - STRICT snake_case
+  src/shared/configurations/**/*.{ts,json,csv}: snake_case
+  
+  # Release files
+  release/**/*.rbxl: snake_case | lowercase
+  
+  # Documentation - snake_case or SCREAMING_SNAKE_CASE
+  docs/**/*.md: snake_case | regex:^[A-Z_]+\.md$
+
+ignore:
+  - node_modules
+  - dist
+  - include
+  - release
+  - __src
+  - .git
+  - .turbo
+  - .roblox-ts
+  - out
+  - build
+  - coverage
+  - .husky/_
+  - .devcontainer
+  - .github
+  - .vscode
+  - scripts/ts/dist
+  - node_modules/@rbxts-js-processed
+  - node_modules/@rbxts-processed

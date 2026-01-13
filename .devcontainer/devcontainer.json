@@ -1,32 +1,29 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/marcosgomesneto/bun-devcontainers/tree/main/src/basic-bun
 {
-  "name": "Anime Reborn Configuration",
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
-  "updateRemoteUserUID": false,
-  // Configure tool-specific properties.
-  "customizations": { // Configure properties specific to VS Code.
-    "vscode": {
-      "settings": {
-        "files.eol": "\n",
-        "editor.codeActionsOnSave": {
-          "source.organizeImports.biome": "explicit"
-        },
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "biomejs.biome",
-        "typescript.format.semicolons": "insert",
-        "javascript.format.semicolons": "insert",
-        "typescript.preferences.importModuleSpecifier": "relative",
-        "terminal.integrated.defaultProfile.linux": "zsh"
-      },
-      // Add the IDs of extensions you want installed when the container is created.
-      "extensions": [
-        "oven.bun-vscode",
-        "biomejs.biome",
-        "streetsidesoftware.code-spell-checker"
-      ]
-    }
-  }
+	"name": "Configuration Generator",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"updateRemoteUserUID": false,
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			"settings": {
+				"files.eol": "\n",
+				"editor.codeActionsOnSave": {
+					"source.organizeImports.biome": "explicit"
+				},
+				"editor.formatOnSave": true,
+				"editor.defaultFormatter": "biomejs.biome",
+				"typescript.format.semicolons": "insert",
+				"javascript.format.semicolons": "insert",
+				"typescript.preferences.importModuleSpecifier": "relative",
+				"terminal.integrated.defaultProfile.linux": "zsh"
+			},
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": ["oven.bun-vscode", "biomejs.biome", "streetsidesoftware.code-spell-checker"]
+		}
+	}
 }

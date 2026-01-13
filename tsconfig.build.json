@@ -1,0 +1,18 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"outDir": "dist",
+		"declaration": true,
+		"emitDeclarationOnly": false,
+		"noEmit": false,
+		"allowImportingTsExtensions": false,
+		"module": "ESNext",
+		"target": "ESNext",
+		"moduleResolution": "bundler",
+		"sourceMap": true,
+		"removeComments": false,
+		"skipLibCheck": true
+	},
+	"include": ["src/**/*"],
+	"exclude": ["src/generated/**/*", "tests/**/*", "scripts/**/*"]
+}

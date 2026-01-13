@@ -1,35 +1,19 @@
 {
-    "version": "0.2",
-    "ignorePaths": [
-        "node_modules",
-        "dist",
-        "build",
-        "*.min.js",
-        "package-lock.json",
-        "bun.lockb"
-    ],
-    "dictionaryDefinitions": [],
-    "dictionaries": [
-        "typescript",
-        "node",
-        "software-terms"
-    ],
-    "words": [
-        "procps",
-        "rbxts",
-        "rbxtsc",
-        "roblox",
-        "rojo",
-        "luau",
-        "commitlint",
-        "husky",
-        "biome",
-        "biomejs",
-        "cspell",
-        "turbo",
-        "concurrently",
-        "anime"
-    ],
-    "ignoreWords": [],
-    "import": []
+	"version": "0.2",
+	"ignorePaths": ["node_modules", "dist", "build", "*.min.js", "package-lock.json", "bun.lockb"],
+	"dictionaryDefinitions": [],
+	"dictionaries": ["typescript", "node", "software-terms"],
+	"words": [
+		"configgen",
+		"procps",
+		"commitlint",
+		"husky",
+		"biome",
+		"biomejs",
+		"cspell",
+		"turbo",
+		"concurrently"
+	],
+	"ignoreWords": [],
+	"import": []
 }
