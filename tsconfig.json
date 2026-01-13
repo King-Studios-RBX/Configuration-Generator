@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "commonjs",
+        "moduleResolution": "Node",
+        "moduleDetection": "force",
+        "strict": true,
+        "noLib": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true,
+        "downlevelIteration": true,
+        "resolveJsonModule": true,
+        "incremental": true,
+        "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+        "jsx": "react",
+        "jsxFactory": "Vide.jsx",
+        "jsxFragmentFactory": "Vide.Fragment",
+        "experimentalDecorators": true,
+        "typeRoots": [
+            "node_modules/@rbxts"
+        ],
+        "outDir": "dist",
+        "rootDir": "src"
+    }
+}

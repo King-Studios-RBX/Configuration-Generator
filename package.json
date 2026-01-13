@@ -1,0 +1,32 @@
+{
+	"name": "anime-reborn-template",
+	"packageManager": "bun@1.3.5",
+	"private": true,
+	"scripts": {
+		"prepare": "bunx husky",
+		"build": "rojo build -o default.rbxl",
+		"compile": "bunx rbxtsc",
+		"watch": "bunx rbxtsc -w",
+		"dev": "concurrently \"rojo serve\" \"turbo run watch\""
+	},
+	"dependencies": {
+		"@rbxts/compiler-types": "^3.0.0-types.0",
+		"@rbxts/services": "^1.6.0"
+	},
+	"devDependencies": {
+		"@ls-lint/ls-lint": "^2.3.1",
+		"cspell": "^9.4.0",
+		"husky": "^9.1.7",
+		"@commitlint/cli": "^20.3.1",
+		"@commitlint/config-conventional": "^20.3.1",
+		"turbo": "^2.7.3",
+		"concurrently": "^9.2.1",
+		"@biomejs/biome": "^2.3.11",
+		"@rbxts/types": "^1.0.896",
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"roblox-ts": "^3.0.0",
+		"typescript": "^5"
+	}
+}

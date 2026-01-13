@@ -1,0 +1,39 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/marcosgomesneto/bun-devcontainers/tree/main/src/basic-bun
+{
+  "name": "Anime Reborn Template",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "updateRemoteUserUID": false,
+  "postCreateCommand": "rokit install --no-trust-check",
+  // Configure tool-specific properties.
+  "customizations": { // Configure properties specific to VS Code.
+    "vscode": {
+      "settings": {
+        "files.eol": "\n",
+        "editor.codeActionsOnSave": {
+          "source.organizeImports.biome": "explicit"
+        },
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "biomejs.biome",
+        "typescript.format.semicolons": "insert",
+        "javascript.format.semicolons": "insert",
+        "typescript.preferences.importModuleSpecifier": "relative",
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      },
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "oven.bun-vscode",
+        "biomejs.biome",
+        "roblox-ts.vscode-roblox-ts",
+        "streetsidesoftware.code-spell-checker"
+      ]
+    }
+  },
+  "features": {
+    "ghcr.io/wxw-matt/devcontainer-features/command_runner:latest": {
+      "command1": "curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/rojo-rbx/rokit/main/scripts/install.sh | bash"
+    }
+  }
+}
