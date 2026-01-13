@@ -1,18 +1,18 @@
 /**
  * Example usage of the Anime Reborn Configuration package
- * 
+ *
  * This file demonstrates how to use the configuration in your TypeScript/Roblox-TS project
  */
 
 import {
-	heroes,
-	getHeroesById,
-	items,
-	getItemsById,
-	gameSettingsConfig,
+	type GameSettingsConfig,
 	type Heroes,
 	type Items,
-	type GameSettingsConfig,
+	gameSettingsConfig,
+	getHeroesById,
+	getItemsById,
+	heroes,
+	items,
 } from "../src/index";
 
 // Example 1: Access all heroes
