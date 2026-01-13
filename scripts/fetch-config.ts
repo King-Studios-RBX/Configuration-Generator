@@ -96,7 +96,19 @@ async function fetchFromGoogleSheets() {
 			"❌ Error fetching from Google Sheets:",
 			error instanceof Error ? error.message : String(error),
 		);
-		console.log("   Using example CSV files instead.");
+		console.log(
+			"   ⚠️  WARNING: Using example CSV files as fallback. This may not reflect production configuration.",
+		);
+		console.log(
+			"   Please fix the Google Sheets configuration or manually update CSV files in config/csv/",
+		);
+		// Exit with error code if STRICT_CONFIG_MODE is set
+		if (process.env.STRICT_CONFIG_MODE === "true") {
+			console.error(
+				"   STRICT_CONFIG_MODE is enabled. Exiting with error code.",
+			);
+			process.exit(1);
+		}
 	}
 }
 

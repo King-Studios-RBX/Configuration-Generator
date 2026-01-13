@@ -9,13 +9,27 @@ interface CsvRecord {
 }
 
 function inferType(value: string): string {
+	// Trim whitespace for accurate type checking
+	const trimmedValue = value.trim();
+
+	// Check for empty or whitespace-only strings
+	if (trimmedValue === "") {
+		return "string";
+	}
+
 	// Check for boolean
-	if (value === "true" || value === "false") {
+	if (trimmedValue === "true" || trimmedValue === "false") {
 		return "boolean";
 	}
 
-	// Check for number
-	if (!Number.isNaN(Number(value)) && value !== "") {
+	// Check for number - must not be empty after trim and must parse as valid number
+	// Also exclude strings that start with 0 (like zip codes) unless it's just "0" or a decimal
+	const num = Number(trimmedValue);
+	if (
+		!Number.isNaN(num) &&
+		Number.isFinite(num) &&
+		!/^0\d/.test(trimmedValue)
+	) {
 		return "number";
 	}
 
@@ -24,13 +38,15 @@ function inferType(value: string): string {
 }
 
 function convertValue(value: string, type: string): string {
+	const trimmedValue = value.trim();
+
 	if (type === "boolean") {
-		return value;
+		return trimmedValue;
 	}
 	if (type === "number") {
-		return value;
+		return trimmedValue;
 	}
-	return `"${value.replace(/"/g, '\\"')}"`;
+	return `"${trimmedValue.replace(/"/g, '\\"')}"`;
 }
 
 function toCamelCase(str: string): string {
