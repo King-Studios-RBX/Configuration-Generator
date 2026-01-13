@@ -42,3 +42,8 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Finder (MacOS) folder config
 .DS_Store
+
+# Generated configuration files
+src/generated/
+config/csv/*.csv
+!config/csv/example-*.csv
