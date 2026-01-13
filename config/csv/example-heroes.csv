@@ -1,0 +1,7 @@
+id,name,description,rarity,baseDamage,baseSpeed,maxLevel,unlockCost
+1,Starter Hero,A basic hero for beginners,Common,100,1.0,50,0
+2,Fire Warrior,Deals fire damage to enemies,Rare,250,1.2,75,500
+3,Ice Mage,Freezes enemies with ice magic,Rare,200,0.9,75,500
+4,Thunder Knight,Strikes with lightning power,Epic,400,1.5,100,2000
+5,Shadow Assassin,Deadly strikes from the shadows,Epic,450,2.0,100,2500
+6,Divine Healer,Heals allies and damages foes,Legendary,300,1.1,150,10000
