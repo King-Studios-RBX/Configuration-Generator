@@ -4,15 +4,15 @@
 	"dictionaryDefinitions": [],
 	"dictionaries": ["typescript", "node", "software-terms"],
 	"words": [
+		"goku",
+		"vegeta",
 		"configgen",
 		"procps",
 		"commitlint",
 		"husky",
 		"biome",
 		"biomejs",
-		"cspell",
-		"turbo",
-		"concurrently"
+		"cspell"
 	],
 	"ignoreWords": [],
 	"import": []
