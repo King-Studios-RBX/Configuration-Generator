@@ -28,6 +28,5 @@
 		"noUnusedParameters": false,
 		"noPropertyAccessFromIndexSignature": false
 	},
-	"include": ["src/**/*"],
-	"exclude": ["tests/**/*"]
+	"include": ["src/**/*"]
 }
