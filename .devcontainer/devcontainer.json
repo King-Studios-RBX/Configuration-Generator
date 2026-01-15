@@ -23,7 +23,12 @@
 				"terminal.integrated.defaultProfile.linux": "zsh"
 			},
 			// Add the IDs of extensions you want installed when the container is created.
-			"extensions": ["oven.bun-vscode", "biomejs.biome", "streetsidesoftware.code-spell-checker"]
+			"extensions": [
+				"oven.bun-vscode",
+				"biomejs.biome",
+				"streetsidesoftware.code-spell-checker",
+				"mechatroner.rainbow-csv"
+			]
 		}
 	}
 }

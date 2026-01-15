@@ -30,7 +30,7 @@
 		"sync-config": "bun run scripts/fetch-config.ts && bun run scripts/compile-config.ts",
 		"verify-config": "bun run scripts/verify-sheets.ts",
 		"prebuild": "bun run compile-config",
-		"build": "tsc --project tsconfig.build.json",
+		"build": "bun build src/index.ts --outdir dist --target node --sourcemap=external && tsc",
 		"test": "bun test"
 	},
 	"dependencies": {
