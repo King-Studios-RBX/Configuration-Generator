@@ -1,36 +1,39 @@
 {
-	"name": "configuration-generator",
+	"name": "@kingStudios/config-generator",
 	"version": "1.0.0",
-	"description": "Configuration generator - editable via Google Sheets, compiled to TypeScript",
+	"description": "A CLI-based configuration generator for any TypeScript project. Edit configs in Google Sheets or CSV, compile to typed TypeScript modules.",
 	"packageManager": "bun@1.3.6",
-	"private": true,
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
+	"private": false,
+	"type": "module",
+	"bin": {
+		"configgen": "dist/cli.js"
+	},
 	"files": [
 		"dist",
-		"config/csv",
 		"README.md",
 		"LICENSE"
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/King-Studios-RBX/Anime-Reborn-Configuration.git"
+		"url": "https://github.com/King-Studios-RBX/config-generator.git"
 	},
+	"author": "King Studios",
+	"license": "MIT",
 	"keywords": [
 		"configuration",
+		"config-generator",
 		"google-sheets",
-		"game-config",
+		"csv",
 		"typescript",
-		"roblox"
+		"cli"
 	],
 	"scripts": {
 		"prepare": "bunx husky",
-		"fetch-config": "bun run scripts/fetch-config.ts",
-		"compile-config": "bun run scripts/compile-config.ts",
-		"sync-config": "bun run scripts/fetch-config.ts && bun run scripts/compile-config.ts",
-		"verify-config": "bun run scripts/verify-sheets.ts",
-		"prebuild": "bun run compile-config",
-		"build": "bun build src/index.ts --outdir dist --target node --sourcemap=external && tsc",
+		"fetch": "bun run src/commands/fetch.ts",
+		"build": "bun build src/cli.ts --outdir dist --target node --sourcemap=external && bun run src/commands/compile.ts",
+		"compile": "bun run src/commands/compile.ts",
+		"verify": "bun run src/commands/verify.ts",
+		"sync": "bun run fetch && bun run compile",
 		"test": "bun test"
 	},
 	"dependencies": {
@@ -50,9 +53,6 @@
 		"husky": "^9.1.7",
 		"turbo": "^2.7.4",
 		"typescript": "^5.6.3"
-	},
-	"bin": {
-		"configgen": "dist/cli.js"
 	},
 	"peerDependencies": {
 		"typescript": "^5"

@@ -1,13 +1,6 @@
 # turbo
 .turbo
 
-# build
-*.rbxl
-*.rbxlx
-
-# rbxts
-include
-
 # dependencies (bun install)
 node_modules
 
@@ -32,6 +25,9 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .env.production.local
 .env.local
 
+## credentials
+service-account-key.json
+
 # caches
 .eslintcache
 .cache
@@ -44,7 +40,5 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .DS_Store
 
 # Generated configuration files
-src/generated/
-config/csv/*.csv
-!config/csv/example-*.csv
-service-account-key.json
+config
+

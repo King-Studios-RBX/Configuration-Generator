@@ -1,5 +1,3 @@
-#!/usr/bin/env bun
-
 import { google } from "googleapis";
 import { stringify } from "csv-stringify/sync";
 import { promises as fs } from "fs";
@@ -21,7 +19,6 @@ function loadEnvFiles() {
 		}
 	}
 }
-loadEnvFiles();
 
 interface SheetMapping {
 	csvFilename: string;
@@ -38,13 +35,17 @@ function slugifySheetName(name: string): string {
 	);
 }
 
-async function fetchFromGoogleSheets() {
+interface FetchOptions {
+	inputDir?: string;
+	outputDir?: string;
+}
+
+export async function fetchConfig(options?: FetchOptions) {
+	loadEnvFiles();
+
 	console.log("🔄 Fetching configuration from Google Sheets...");
 
-	// Check if Google Sheets is configured
-	const keyPath = process.env.GOOGLE_SERVICE_ACCOUNT_KEY_PATH;
-	const sheetsId = process.env.GOOGLE_SHEETS_ID;
-	const sheetsMapping = process.env.SHEETS_MAPPING;
+	const csvDir = options?.inputDir || path.join(process.cwd(), "config", "csv");
 
 	if (!keyPath || !sheetsId) {
 		console.log("⚠️  Google Sheets not configured. Using example CSV files instead.");
@@ -138,7 +139,8 @@ async function fetchFromGoogleSheets() {
 				const csv = stringify(rows);
 
 				// Write to file
-				const csvPath = path.join(process.cwd(), "config", "csv", `${mapping.csvFilename}.csv`);
+				const csvPath = path.join(csvDir, `${mapping.csvFilename}.csv`);
+				await fs.mkdir(csvDir, { recursive: true });
 				await fs.writeFile(csvPath, csv);
 
 				console.log(`    ✅ Saved to ${mapping.csvFilename}.csv`);
@@ -187,9 +189,3 @@ async function fetchFromGoogleSheets() {
 		}
 	}
 }
-
-// Run the script
-fetchFromGoogleSheets().catch((error) => {
-	console.error("Fatal error:", error);
-	process.exit(1);
-});

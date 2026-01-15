@@ -1,9 +1,0 @@
-key,value,description
-maxPlayerLevel,100,Maximum level a player can reach
-startingGold,1000,Amount of gold players start with
-dailyRewardAmount,500,Gold awarded for daily login
-maxInventorySize,50,Maximum number of items in inventory
-pvpEnabled,true,Whether PVP is enabled
-maintenanceMode,false,Whether the game is in maintenance
-experienceMultiplier,1.0,Global experience gain multiplier
-dropRateBonus,0.0,Additional drop rate percentage

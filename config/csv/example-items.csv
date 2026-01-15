@@ -1,7 +1,0 @@
-id,name,description,type,value,cost,stackable
-1,Health Potion,Restores 100 HP,Consumable,100,50,true
-2,Mana Potion,Restores 50 MP,Consumable,50,30,true
-3,Speed Boost,Increases speed by 20%,Buff,0.2,100,false
-4,Damage Boost,Increases damage by 30%,Buff,0.3,150,false
-5,Experience Token,Grants 500 XP,Consumable,500,200,true
-6,Rare Summon Ticket,Summons a rare hero,Special,0,1000,true

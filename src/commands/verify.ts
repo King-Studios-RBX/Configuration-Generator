@@ -1,5 +1,3 @@
-#!/usr/bin/env bun
-
 import { google } from "googleapis";
 import { promises as fs } from "fs";
 import { existsSync } from "fs";
@@ -20,7 +18,12 @@ function loadEnvFiles() {
 	}
 }
 
-async function verifySheetsAccess() {
+interface VerifyOptions {
+	inputDir?: string;
+	outputDir?: string;
+}
+
+export async function verifySheetsAccess(_options?: VerifyOptions) {
 	loadEnvFiles();
 
 	const keyPath = process.env.GOOGLE_SERVICE_ACCOUNT_KEY_PATH;
@@ -92,5 +95,3 @@ async function verifySheetsAccess() {
 		process.exit(1);
 	}
 }
-
-verifySheetsAccess();
