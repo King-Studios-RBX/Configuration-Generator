@@ -7,15 +7,15 @@ WARNINGS=""
 
 echo "🔍 Validating file naming conventions..."
 
-# Get staged files (if in git hook context) or all tracked files - ONLY in src/
+# Get staged files (if in git hook context) or all tracked files - ONLY in src/ and tests/
 if git rev-parse --git-dir > /dev/null 2>&1; then
     if git diff --cached --name-only > /dev/null 2>&1; then
-        FILES=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null | grep '^src/' || git ls-files | grep '^src/')
+        FILES=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null | grep -E '^(src|tests)/' || git ls-files | grep -E '^(src|tests)/')
     else
-        FILES=$(git ls-files | grep '^src/')
+        FILES=$(git ls-files | grep -E '^(src|tests)/')
     fi
 else
-    FILES=$(find src -type f -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/dist/*" -not -path "*/include/*" -not -path "*/release/*" 2>/dev/null || true)
+    FILES=$(find src tests -type f -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/dist/*" -not -path "*/include/*" -not -path "*/release/*" 2>/dev/null || true)
 fi
 
 # Function to check snake_case

@@ -5,25 +5,6 @@
 		"lineWidth": 100,
 		"indentStyle": "tab"
 	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true,
-			"suspicious": "off",
-			"complexity": "off",
-			"correctness": {
-				"noUnusedImports": "off"
-			},
-			"style": "off"
-		}
-	},
-	"assist": {
-		"actions": {
-			"source": {
-				"organizeImports": "off"
-			}
-		}
-	},
 	"files": {
 		"includes": ["**/*.{ts,tsx,js,jsx,json,css,scss,md}"]
 	}

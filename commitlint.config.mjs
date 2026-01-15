@@ -22,38 +22,22 @@ export default {
 			2,
 			"always",
 			[
-				// Core systems
-				"server",
-				"client",
-				"shared",
+				// CLI & Commands
+				"cli",
+				"compile",
+				"fetch",
+				"verify",
 
-				// Game systems
-				"tower",
-				"enemy",
-				"combat",
-				"ecs",
-				"replication",
-
-				// UI & Interface
-				"ui",
-				"controller",
-				"interface",
-
-				// Data & Config
+				// Core
+				"core",
 				"config",
-				"balance",
-				"data",
 
 				// Infrastructure
-				"workflow",
-				"ci",
-				"deps",
 				"build",
+				"deps",
 				"test",
+				"ci",
 				"docs",
-				"repo", // Tools
-				"balance-editor",
-				"scripts",
 			],
 		],
 		"scope-case": [2, "always", "kebab-case"],

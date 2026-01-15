@@ -29,5 +29,5 @@
 		"noPropertyAccessFromIndexSignature": false
 	},
 	"include": ["src/**/*"],
-	"exclude": ["src/generated/**/*", "tests/**/*", "scripts/**/*"]
+	"exclude": ["tests/**/*"]
 }
