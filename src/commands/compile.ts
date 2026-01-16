@@ -1,6 +1,6 @@
+import { promises as fs } from "node:fs";
+import * as path from "node:path";
 import { parse } from "csv-parse/sync";
-import { promises as fs } from "fs";
-import * as path from "path";
 
 interface CsvRecord {
 	[key: string]: string;

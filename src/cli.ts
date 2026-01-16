@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import { compileConfig } from "./config_generator";
+import { promises as fs } from "node:fs";
 import { compileConfiguration } from "./commands/compile";
 import { fetchConfig } from "./commands/fetch";
 import { verifySheetsAccess } from "./commands/verify";
-import { promises as fs } from "fs";
+import { compileConfig } from "./config_generator";
 
 interface Options {
 	inputDir?: string; // CSV input directory

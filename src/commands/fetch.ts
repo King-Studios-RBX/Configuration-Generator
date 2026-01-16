@@ -1,9 +1,8 @@
-import { google } from "googleapis";
+import { existsSync, promises as fs } from "node:fs";
+import * as path from "node:path";
 import { stringify } from "csv-stringify/sync";
-import { promises as fs } from "fs";
-import { existsSync } from "fs";
-import * as path from "path";
 import * as dotenv from "dotenv";
+import { google } from "googleapis";
 
 // Load environment variables from .env.local and .env (without overriding existing env)
 function loadEnvFiles() {
@@ -46,6 +45,10 @@ export async function fetchConfig(options?: FetchOptions) {
 	console.log("🔄 Fetching configuration from Google Sheets...");
 
 	const csvDir = options?.inputDir || path.join(process.cwd(), "config", "csv");
+
+	const keyPath = process.env.GOOGLE_SERVICE_ACCOUNT_KEY_PATH;
+	const sheetsId = process.env.GOOGLE_SHEETS_ID;
+	const sheetsMapping = process.env.SHEETS_MAPPING;
 
 	if (!keyPath || !sheetsId) {
 		console.log("⚠️  Google Sheets not configured. Using example CSV files instead.");

@@ -41,8 +41,9 @@ describe("CLI", () => {
 		try {
 			execSync("node dist/cli.js unknown", { encoding: "utf-8" });
 			expect(true).toBe(false); // Should fail
-		} catch (error: any) {
-			expect(error.status).toBeGreaterThan(0);
+		} catch (error: unknown) {
+			const exitCode = (error as { status?: number }).status ?? 0;
+			expect(exitCode).toBeGreaterThan(0);
 		}
 	});
 
@@ -82,8 +83,9 @@ describe("CLI", () => {
 		try {
 			execSync("node dist/cli.js compile", { encoding: "utf-8" });
 			expect(true).toBe(false);
-		} catch (error: any) {
-			expect(error.stderr.toString()).toContain("Missing <input.csv>");
+		} catch (error: unknown) {
+			const stderr = String((error as { stderr?: unknown })?.stderr ?? "");
+			expect(stderr).toContain("Missing <input.csv>");
 		}
 	});
 

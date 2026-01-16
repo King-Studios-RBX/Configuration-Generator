@@ -1,8 +1,7 @@
-import { google } from "googleapis";
-import { promises as fs } from "fs";
-import { existsSync } from "fs";
-import * as path from "path";
+import { existsSync, promises as fs } from "node:fs";
+import * as path from "node:path";
 import * as dotenv from "dotenv";
+import { google } from "googleapis";
 
 function loadEnvFiles() {
 	const envCandidates = [
@@ -80,8 +79,10 @@ export async function verifySheetsAccess(_options?: VerifyOptions) {
 		}
 
 		console.log("✅ Verify complete");
-	} catch (err: any) {
-		const code = err?.code || err?.response?.status;
+	} catch (err: unknown) {
+		const code =
+			(err as { code?: number; response?: { status: number } })?.code ||
+			(err as { response?: { status: number } })?.response?.status;
 		if (code === 403) {
 			console.error(
 				"❌ Permission denied (403). The service account does not have access to this spreadsheet.",

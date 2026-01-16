@@ -1,6 +1,5 @@
-// src/config_generator.ts
+import { promises as fs } from "node:fs";
 import { parse } from "csv-parse/sync";
-import { promises as fs } from "fs";
 
 export interface InferredTypes {
 	[key: string]: "string" | "number" | "boolean";
@@ -35,7 +34,7 @@ export async function compileConfig<T extends Record<string, unknown>>(
 
 	// Infer types per column across all rows
 	const types: InferredTypes = {};
-	const sample = rows[0]!;
+	const sample = rows.length > 0 ? rows[0] : {};
 	for (const key of Object.keys(sample)) {
 		const observed = new Set<string>();
 		for (const r of rows) {
