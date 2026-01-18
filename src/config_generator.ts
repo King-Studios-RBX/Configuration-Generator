@@ -34,16 +34,18 @@ export async function compileConfig<T extends Record<string, unknown>>(
 
 	// Infer types per column across all rows
 	const types: InferredTypes = {};
-	const sample = rows.length > 0 ? rows[0] : {};
-	for (const key of Object.keys(sample)) {
-		const observed = new Set<string>();
-		for (const r of rows) {
-			observed.add(inferType(r[key] ?? ""));
+	const sample = rows[0];
+	if (sample) {
+		for (const key of Object.keys(sample)) {
+			const observed = new Set<string>();
+			for (const r of rows) {
+				observed.add(inferType(r[key] ?? ""));
+			}
+			if (observed.has("string") && observed.size > 1) types[key] = "string";
+			else if (observed.has("boolean")) types[key] = "boolean";
+			else if (observed.has("number")) types[key] = "number";
+			else types[key] = "string";
 		}
-		if (observed.has("string") && observed.size > 1) types[key] = "string";
-		else if (observed.has("boolean")) types[key] = "boolean";
-		else if (observed.has("number")) types[key] = "number";
-		else types[key] = "string";
 	}
 
 	// Convert values according to inferred types

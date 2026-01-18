@@ -12,15 +12,18 @@ interface Options {
 
 function parseOptions(args: string[]): { cmd: string; args: string[]; options: Options } {
 	const options: Options = {};
-	const filteredArgs = [];
+	const filteredArgs: string[] = [];
 
 	for (let i = 0; i < args.length; i++) {
-		if (args[i] === "--input-dir" && args[i + 1]) {
-			options.inputDir = args[++i];
-		} else if (args[i] === "--output-dir" && args[i + 1]) {
-			options.outputDir = args[++i];
+		const arg = args[i];
+		if (!arg) continue;
+
+		if (arg === "--input-dir" && args[i + 1]) {
+			options.inputDir = args[++i] ?? "";
+		} else if (arg === "--output-dir" && args[i + 1]) {
+			options.outputDir = args[++i] ?? "";
 		} else {
-			filteredArgs.push(args[i]);
+			filteredArgs.push(arg);
 		}
 	}
 

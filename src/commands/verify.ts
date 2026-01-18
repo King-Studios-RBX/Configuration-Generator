@@ -91,7 +91,10 @@ export async function verifySheetsAccess(_options?: VerifyOptions) {
 		} else if (code === 404) {
 			console.error("❌ Spreadsheet not found (404). Check GOOGLE_SHEETS_ID.");
 		} else {
-			console.error("❌ Error verifying sheets:", err?.message || String(err));
+			console.error(
+				"❌ Error verifying sheets:",
+				(err as { message?: string })?.message || String(err),
+			);
 		}
 		process.exit(1);
 	}

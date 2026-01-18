@@ -38,7 +38,7 @@ function convertValue(value: string, type: string): string {
 }
 
 function toCamelCase(str: string): string {
-	return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+	return str.replace(/-([a-z])/g, (g) => g[1]?.toUpperCase() ?? "");
 }
 
 function toPascalCase(str: string): string {
@@ -87,6 +87,7 @@ export async function compileConfiguration(options?: CompileOptions) {
 				columns: true,
 				skip_empty_lines: true,
 				trim: true,
+				relax_column_count: true,
 			}) as CsvRecord[];
 
 			if (records.length === 0) {
@@ -101,13 +102,17 @@ export async function compileConfiguration(options?: CompileOptions) {
 
 			// Infer types from first row
 			const firstRecord = records[0];
+			if (!firstRecord) {
+				console.log(`    ⚠️  ${file} has no valid records, skipping`);
+				continue;
+			}
 			const typeMap: { [key: string]: string } = {};
 
 			for (const key of Object.keys(firstRecord)) {
 				// Check all records to infer the most appropriate type
 				const types = new Set<string>();
 				for (const record of records) {
-					types.add(inferType(record[key]));
+					types.add(inferType(record[key] ?? ""));
 				}
 
 				// If we have mixed types including string, use string
@@ -123,17 +128,18 @@ export async function compileConfiguration(options?: CompileOptions) {
 			}
 
 			// Special handling for key-value configs (only key and value columns)
+			const firstRecordKeys = Object.keys(firstRecord);
 			const isKeyValueConfig =
-				Object.keys(firstRecord).length >= 2 &&
-				Object.keys(firstRecord).includes("key") &&
-				Object.keys(firstRecord).includes("value");
+				firstRecordKeys.length >= 2 &&
+				firstRecordKeys.includes("key") &&
+				firstRecordKeys.includes("value");
 
 			if (isKeyValueConfig) {
 				// Generate a flat config object
 				const configInterface = `export interface ${typeName}Config {\n${records
 					.map((record) => {
-						const key = record.key;
-						const value = record.value;
+						const key = record.key ?? "";
+						const value = record.value ?? "";
 						const type = inferType(value);
 						const description = record.description || "";
 						return `  /** ${description} */\n  ${key}: ${type};`;
@@ -142,8 +148,8 @@ export async function compileConfiguration(options?: CompileOptions) {
 
 				const configData = `export const ${variableName}Config: ${typeName}Config = {\n${records
 					.map((record) => {
-						const key = record.key;
-						const value = record.value;
+						const key = record.key ?? "";
+						const value = record.value ?? "";
 						const type = inferType(value);
 						return `  ${key}: ${convertValue(value, type)},`;
 					})
@@ -181,7 +187,7 @@ export async function compileConfiguration(options?: CompileOptions) {
 				// Helper function to get by id
 				const helperContent = `\nexport function get${typeName}ById(id: number): ${typeName} | undefined {\n  return ${variableName}.find((item) => item.id === id);\n}`;
 
-				const fullContent = `${interfaceContent}\n\n${dataContent}${Object.keys(firstRecord).includes("id") ? helperContent : ""}\n`;
+				const fullContent = `${interfaceContent}\n\n${dataContent}${firstRecordKeys.includes("id") ? helperContent : ""}\n`;
 
 				const outputFile = path.join(outputDir, `${configName}.ts`);
 				await fs.writeFile(outputFile, fullContent);

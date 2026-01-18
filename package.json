@@ -34,6 +34,7 @@
 		"compile": "bun run src/commands/compile.ts",
 		"verify": "bun run src/commands/verify.ts",
 		"sync": "bun run fetch && bun run compile",
+		"lint": "bunx biome lint src tests",
 		"test": "bun test"
 	},
 	"dependencies": {
