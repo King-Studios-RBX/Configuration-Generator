@@ -6,6 +6,117 @@ interface CsvRecord {
 	[key: string]: string;
 }
 
+function parseCSVWithQuotes(csvContent: string): CsvRecord[] {
+	const records: CsvRecord[] = [];
+	const lines = csvContent.split("\n");
+
+	if (lines.length === 0) {
+		return records;
+	}
+
+	// Skip empty lines to find the actual header
+	let headerIndex = 0;
+	let headerLine = "";
+	while (headerIndex < lines.length && !lines[headerIndex]?.trim()) {
+		headerIndex++;
+	}
+
+	if (headerIndex >= lines.length) {
+		return records;
+	}
+
+	headerLine = lines[headerIndex] ?? "";
+
+	// Parse header with quote awareness
+	const headers: string[] = [];
+	let currentHeader = "";
+	let inQuotes = false;
+
+	for (let i = 0; i < headerLine.length; i++) {
+		const char = headerLine[i];
+		if (char === '"') {
+			inQuotes = !inQuotes;
+		} else if (char === "," && !inQuotes) {
+			headers.push(currentHeader.trim().replace(/^"|"$/g, ""));
+			currentHeader = "";
+		} else {
+			currentHeader += char;
+		}
+	}
+	headers.push(currentHeader.trim().replace(/^"|"$/g, ""));
+
+	// Parse data rows - skip empty lines and parse quoted fields properly
+	let i = headerIndex + 1;
+	while (i < lines.length) {
+		let currentLine = lines[i] ?? "";
+
+		// Skip empty lines
+		if (!currentLine?.trim()) {
+			i++;
+			continue;
+		}
+
+		// Check if line has unclosed quotes - if so, accumulate lines until quotes are closed
+		let unclosedQuotes = false;
+		let quoteCount = 0;
+		for (const char of currentLine) {
+			if (char === '"') quoteCount++;
+		}
+		unclosedQuotes = quoteCount % 2 === 1;
+
+		// Accumulate lines while quotes are unclosed
+		while (unclosedQuotes && i + 1 < lines.length) {
+			i++;
+			const nextLine = lines[i];
+			if (nextLine) {
+				currentLine += `\n${nextLine}`;
+				for (const char of nextLine) {
+					if (char === '"') quoteCount++;
+				}
+				unclosedQuotes = quoteCount % 2 === 1;
+			}
+		}
+
+		// Parse the complete line
+		const values = extractFieldsFromLine(currentLine);
+
+		// Only add rows that have at least one non-empty value
+		if (values.some((v) => v.trim())) {
+			const record: CsvRecord = {};
+			headers.forEach((header, index) => {
+				record[header] = values[index] ?? "";
+			});
+			records.push(record);
+		}
+
+		i++;
+	}
+
+	return records;
+}
+
+function extractFieldsFromLine(line: string): string[] {
+	const fields: string[] = [];
+	let currentValue = "";
+	let inQuotes = false;
+
+	for (let i = 0; i < line.length; i++) {
+		const char = line[i];
+		if (char === '"') {
+			inQuotes = !inQuotes;
+			currentValue += char;
+		} else if (char === "," && !inQuotes) {
+			fields.push(currentValue.trim().replace(/^"|"$/g, ""));
+			currentValue = "";
+		} else {
+			currentValue += char;
+		}
+	}
+	fields.push(currentValue.trim().replace(/^"|"$/g, ""));
+
+	return fields;
+}
+
 function inferType(value: string): string {
 	const trimmedValue = value.trim();
 
@@ -82,13 +193,21 @@ export async function compileConfiguration(options?: CompileOptions) {
 			const csvPath = path.join(csvDir, file);
 			const csvContent = await fs.readFile(csvPath, "utf-8");
 
-			// Parse CSV
-			const records = parse(csvContent, {
-				columns: true,
-				skip_empty_lines: true,
-				trim: true,
-				relax_column_count: true,
-			}) as CsvRecord[];
+			// Parse CSV using fallback parser by default for Google Sheets CSVs
+			// which often have complex quoted fields with newlines and commas
+			let records: CsvRecord[] = [];
+
+			try {
+				// Try standard parsing first with strict settings
+				records = parse(csvContent, {
+					columns: true,
+					skip_empty_lines: true,
+					trim: true,
+				}) as CsvRecord[];
+			} catch {
+				// If standard parsing fails, use quote-aware manual parser
+				records = parseCSVWithQuotes(csvContent);
+			}
 
 			if (records.length === 0) {
 				console.log(`    ⚠️  ${file} is empty, skipping`);

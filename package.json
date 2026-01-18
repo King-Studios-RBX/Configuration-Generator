@@ -1,5 +1,5 @@
 {
-	"name": "@kingstudios/config-generator",
+	"name": "anime-reborn-config-generator",
 	"version": "1.0.0",
 	"description": "A CLI-based configuration generator for any TypeScript project. Edit configs in Google Sheets or CSV, compile to typed TypeScript modules.",
 	"packageManager": "bun@1.3.6",
