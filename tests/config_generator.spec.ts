@@ -42,6 +42,59 @@ describe("compileConfig", () => {
 		expect(data[1]).toEqual({ id: 2, name: "Vegeta", power: 8500, isLegendary: false });
 	});
 
+	it("should handle CSV with duplicate header rows in data", async () => {
+		tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "configgen-"));
+		const csvPath = path.join(tmpDir, "duplicate-headers.csv");
+		const csv = [
+			"id,name,value",
+			"1,Item1,100",
+			"id,name,value", // Duplicate header
+			"2,Item2,200",
+		].join("\n");
+		await fs.writeFile(csvPath, csv, "utf-8");
+
+		const { data } = await compileConfig(csvPath);
+		expect(data.length).toBe(2); // Should only have 2 data rows, not 3
+		expect(data[0]).toEqual({ id: 1, name: "Item1", value: 100 });
+		expect(data[1]).toEqual({ id: 2, name: "Item2", value: 200 });
+	});
+
+	it("should handle CSV with empty first column", async () => {
+		tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "configgen-"));
+		const csvPath = path.join(tmpDir, "empty-first-col.csv");
+		const csv = [",name,value,score", ",Item1,100,50", ",Item2,200,75"].join("\n");
+		await fs.writeFile(csvPath, csv, "utf-8");
+
+		const { data } = await compileConfig(csvPath);
+		expect(data.length).toBe(2);
+		expect(data[0]).toMatchObject({ name: "Item1", value: 100, score: 50 });
+		expect(data[1]).toMatchObject({ name: "Item2", value: 200, score: 75 });
+	});
+
+	it("should handle CSV starting with special characters", async () => {
+		tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "configgen-"));
+		const csvPath = path.join(tmpDir, "special-chars.csv");
+		const csv = ["`", "", "id,name,value", "1,Item1,100", "2,Item2,200"].join("\n");
+		await fs.writeFile(csvPath, csv, "utf-8");
+
+		const { data } = await compileConfig(csvPath);
+		expect(data.length).toBe(2);
+		expect(data[0]).toEqual({ id: 1, name: "Item1", value: 100 });
+		expect(data[1]).toEqual({ id: 2, name: "Item2", value: 200 });
+	});
+
+	it("should skip multiple empty rows between data", async () => {
+		tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "configgen-"));
+		const csvPath = path.join(tmpDir, "empty-rows.csv");
+		const csv = ["id,name,value", "", "", "1,Item1,100", "", "2,Item2,200", ""].join("\n");
+		await fs.writeFile(csvPath, csv, "utf-8");
+
+		const { data } = await compileConfig(csvPath);
+		expect(data.length).toBe(2);
+		expect(data[0]).toEqual({ id: 1, name: "Item1", value: 100 });
+		expect(data[1]).toEqual({ id: 2, name: "Item2", value: 200 });
+	});
+
 	it("should handle boolean types correctly", async () => {
 		tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "configgen-"));
 		const csvPath = path.join(tmpDir, "booleans.csv");

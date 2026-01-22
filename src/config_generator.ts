@@ -22,18 +22,22 @@ function parseCSVWithQuotes(csvContent: string): Array<Record<string, string>> {
 		return records;
 	}
 
-	// Skip empty lines to find the actual header
+	// Skip empty lines and lines with only special characters to find the actual header
 	let headerIndex = 0;
 	let headerLine = "";
-	while (headerIndex < lines.length && !lines[headerIndex]?.trim()) {
+	while (headerIndex < lines.length) {
+		const line = lines[headerIndex]?.trim() ?? "";
+		// Skip empty lines and lines that are just special characters
+		if (line && line !== "`" && !/^[`~!@#$%^&*()\-_=+[\]{}|;:'"<>?/\s]*$/.test(line)) {
+			headerLine = lines[headerIndex] ?? "";
+			break;
+		}
 		headerIndex++;
 	}
 
-	if (headerIndex >= lines.length) {
+	if (headerIndex >= lines.length || !headerLine) {
 		return records;
 	}
-
-	headerLine = lines[headerIndex] ?? "";
 
 	// Parse header with quote awareness
 	const headers: string[] = [];
@@ -58,8 +62,13 @@ function parseCSVWithQuotes(csvContent: string): Array<Record<string, string>> {
 	while (i < lines.length) {
 		let currentLine = lines[i] ?? "";
 
-		// Skip empty lines
-		if (!currentLine?.trim()) {
+		// Skip empty lines and special character lines
+		const trimmedLine = currentLine.trim();
+		if (
+			!trimmedLine ||
+			trimmedLine === "`" ||
+			/^[`~!@#$%^&*()\-_=+[\]{}|;:'"<>?/\s]*$/.test(trimmedLine)
+		) {
 			i++;
 			continue;
 		}
@@ -88,13 +97,34 @@ function parseCSVWithQuotes(csvContent: string): Array<Record<string, string>> {
 		// Parse the complete line
 		const values = extractFieldsFromLine(currentLine);
 
-		// Only add rows that have at least one non-empty value
-		if (values.some((v) => v.trim())) {
-			const record: Record<string, string> = {};
-			headers.forEach((header, index) => {
-				record[header] = values[index] ?? "";
+		// Skip rows that are duplicate headers or have no meaningful data
+		if (values.length > 0) {
+			// Check if this row is a duplicate header row
+			// Compare only non-empty columns since first column might be intentionally empty
+			let matchingHeaderCount = 0;
+			let nonEmptyHeaderCount = 0;
+
+			headers.forEach((header, idx) => {
+				if (header) {
+					nonEmptyHeaderCount++;
+					const value = (values[idx] ?? "").trim();
+					if (value === header) {
+						matchingHeaderCount++;
+					}
+				}
 			});
-			records.push(record);
+
+			const isDuplicateHeader =
+				nonEmptyHeaderCount > 0 && matchingHeaderCount === nonEmptyHeaderCount;
+
+			// Only add rows that have at least one non-empty value and are not duplicate headers
+			if (!isDuplicateHeader && values.some((v) => v.trim())) {
+				const record: Record<string, string> = {};
+				headers.forEach((header, index) => {
+					record[header] = values[index] ?? "";
+				});
+				records.push(record);
+			}
 		}
 
 		i++;
@@ -146,6 +176,30 @@ export async function compileConfig<T extends Record<string, unknown>>(
 		// If standard parsing fails, use quote-aware manual parser
 		rows = parseCSVWithQuotes(csvContent);
 	}
+
+	if (rows.length === 0) {
+		return { data: [], types: {} };
+	}
+
+	// Filter out duplicate header rows that might appear in the data
+	const headers = Object.keys(rows[0] ?? {});
+	const nonEmptyHeaders = headers.filter((h) => h.trim() !== "");
+
+	rows = rows.filter((row) => {
+		// Check if this row is a duplicate header
+		if (nonEmptyHeaders.length === 0) return true;
+
+		let matchingHeaderCount = 0;
+		for (const header of nonEmptyHeaders) {
+			const value = (row[header] ?? "").trim();
+			if (value === header) {
+				matchingHeaderCount++;
+			}
+		}
+
+		// If all non-empty columns match their headers, this is a duplicate header row
+		return matchingHeaderCount !== nonEmptyHeaders.length;
+	});
 
 	if (rows.length === 0) {
 		return { data: [], types: {} };

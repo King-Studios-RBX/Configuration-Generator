@@ -150,4 +150,112 @@ describe("compile command", () => {
 		expect(output).toContain("first-name");
 		expect(output).toContain("last-name");
 	});
+
+	it("should handle CSV with duplicate header rows in data", async () => {
+		const inputDir = path.join(tmpDir, "input");
+		const outputDir = path.join(tmpDir, "output");
+		await fs.mkdir(inputDir, { recursive: true });
+		await fs.mkdir(outputDir, { recursive: true });
+
+		const csv = [
+			"id,name,value",
+			"1,Item1,100",
+			"id,name,value", // Duplicate header row
+			"2,Item2,200",
+		].join("\n");
+		await fs.writeFile(path.join(inputDir, "items.csv"), csv);
+
+		await compileConfiguration({ inputDir, outputDir });
+
+		const output = await fs.readFile(path.join(outputDir, "items.ts"), "utf-8");
+		expect(output).toContain('"id": 1');
+		expect(output).toContain('"id": 2');
+		// Count occurrences - should only have 2 data items, not 3
+		const idMatches = output.match(/"id": \d+/g);
+		expect(idMatches?.length).toBe(2);
+	});
+
+	it("should handle CSV with empty first column", async () => {
+		const inputDir = path.join(tmpDir, "input");
+		const outputDir = path.join(tmpDir, "output");
+		await fs.mkdir(inputDir, { recursive: true });
+		await fs.mkdir(outputDir, { recursive: true });
+
+		const csv = [",name,value", ",Item1,100", ",Item2,200"].join("\n");
+		await fs.writeFile(path.join(inputDir, "data.csv"), csv);
+
+		await compileConfiguration({ inputDir, outputDir });
+
+		const output = await fs.readFile(path.join(outputDir, "data.ts"), "utf-8");
+		expect(output).toContain("Item1");
+		expect(output).toContain("Item2");
+		expect(output).toContain('"name"');
+		expect(output).toContain('"value"');
+	});
+
+	it("should handle CSV starting with special characters", async () => {
+		const inputDir = path.join(tmpDir, "input");
+		const outputDir = path.join(tmpDir, "output");
+		await fs.mkdir(inputDir, { recursive: true });
+		await fs.mkdir(outputDir, { recursive: true });
+
+		const csv = ["`", "", "id,name,value", "1,Item1,100", "2,Item2,200"].join("\n");
+		await fs.writeFile(path.join(inputDir, "special.csv"), csv);
+
+		await compileConfiguration({ inputDir, outputDir });
+
+		const output = await fs.readFile(path.join(outputDir, "special.ts"), "utf-8");
+		expect(output).toContain('"id": 1');
+		expect(output).toContain('"id": 2');
+		expect(output).toContain("Item1");
+		expect(output).toContain("Item2");
+		// Should not have backtick as a column name
+		expect(output).not.toContain('"`"');
+	});
+
+	it("should skip multiple empty rows between data", async () => {
+		const inputDir = path.join(tmpDir, "input");
+		const outputDir = path.join(tmpDir, "output");
+		await fs.mkdir(inputDir, { recursive: true });
+		await fs.mkdir(outputDir, { recursive: true });
+
+		const csv = ["id,name,value", "", "", "1,Item1,100", "", "2,Item2,200", ""].join("\n");
+		await fs.writeFile(path.join(inputDir, "data.csv"), csv);
+
+		await compileConfiguration({ inputDir, outputDir });
+
+		const output = await fs.readFile(path.join(outputDir, "data.ts"), "utf-8");
+		const idMatches = output.match(/"id": \d+/g);
+		expect(idMatches?.length).toBe(2);
+	});
+
+	it("should handle complex CSV with all edge cases", async () => {
+		const inputDir = path.join(tmpDir, "input");
+		const outputDir = path.join(tmpDir, "output");
+		await fs.mkdir(inputDir, { recursive: true });
+		await fs.mkdir(outputDir, { recursive: true });
+
+		const csv = [
+			"`", // Special char line
+			"", // Empty line
+			",LEVEL,BASE ATTACK,RANGE", // Empty first column
+			"", // Empty line
+			",60,338,35",
+			"", // Empty line
+			",LEVEL,BASE ATTACK,RANGE", // Duplicate header
+			"", // Empty line
+			",70,450,40",
+		].join("\n");
+		await fs.writeFile(path.join(inputDir, "complex.csv"), csv);
+
+		await compileConfiguration({ inputDir, outputDir });
+
+		const output = await fs.readFile(path.join(outputDir, "complex.ts"), "utf-8");
+		expect(output).toContain("LEVEL");
+		expect(output).toContain("BASE ATTACK");
+		expect(output).toContain("RANGE");
+		// Should have exactly 2 data rows (numbers, not strings)
+		const levelMatches = output.match(/"LEVEL": \d+/g);
+		expect(levelMatches?.length).toBe(2);
+	});
 });
