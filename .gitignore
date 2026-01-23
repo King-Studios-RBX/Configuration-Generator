@@ -39,3 +39,5 @@ service-account-key.json
 # Generated configuration files
 config
 
+# temporary folder from src code to reference for balance sheet
+configurations
